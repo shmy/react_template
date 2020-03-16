@@ -8,6 +8,11 @@
 [x] 图像文件 按需转换Base64或者转移目录  
 [x] jest enzyme to unit test  
 [ ] cypress to unit test  
+[ ] .ENV  
+[ ] eslint  
+[ ] prettier  
+[ ] Dockerfile  
+[ ] Jenkinsfile   
 
 
 # scripts
