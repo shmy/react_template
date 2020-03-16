@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "removeComments": true,
+    "module": "esnext",
+    "target": "es5",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "allowJs": false,
+    "strict": true,
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "lib": [
+      "DOM",
+      "ES5",
+      "ScriptHost",
+      "es2015.generator",
+      "es2015.iterable",
+      "es2015.promise"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
