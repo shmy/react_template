@@ -6,6 +6,9 @@
 [x] 提取css样式到单独文件 压缩js  
 [x] Proxy 代理  
 [x] 图像文件 按需转换Base64或者转移目录  
+[x] jest enzyme to unit test  
+[ ] cypress to unit test  
+
 
 # scripts
 
