@@ -1,6 +1,8 @@
 const path = require("path");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const tsImportPluginFactory = require('ts-import-plugin');
 
 const resolvePath = name => path.resolve(__dirname, '../', name);
 exports.config = {
@@ -20,6 +22,25 @@ exports.config = {
 				exclude: /node_modules/,
 				include: resolvePath('src'),
 				loader: 'ts-loader',
+				options: {
+					transpileOnly: true,
+					onlyCompileBundledFiles: true,
+					getCustomTransformers: () => ({
+						before: [tsImportPluginFactory([
+							{
+								libraryName: 'antd',
+								libraryDirectory: 'es',
+								style: true
+							},
+							{
+								style: false,
+								libraryName: 'lodash',
+								libraryDirectory: null,
+								camel2DashComponentName: false
+							}
+						])]
+					}),
+				},
 			},
 			{
 				test: /\.(jpg)|(jpeg)|(png)|(bmp)|(svg)$/,
@@ -54,5 +75,33 @@ exports.config = {
 			},
 		}),
 	]
+};
+exports.getStyleLoaders = (isProd = false) => {
+	const styleLoader = isProd ? MiniCssExtractPlugin.loader : 'style-loader';
+	return [
+		{
+			test: /\.css$/,
+			use: [
+				styleLoader,
+				{loader: 'css-loader', options: {modules: true, sourceMap: true}},
+			]
+		},
+		{
+			test: /\.(scss)|(sass)$/,
+			use: [
+				styleLoader,
+				{loader: 'css-loader', options: {modules: true, sourceMap: true}},
+				{loader: 'sass-loader', options: {sourceMap: true}}
+			],
+		},
+		{
+			test: /\.less$/,
+			use: [
+				styleLoader,
+				{loader: 'css-loader', options: {modules: false, sourceMap: true}},
+				{loader: 'less-loader', options: {javascriptEnabled: true, sourceMap: true}}
+			],
+		},
+	];
 };
 exports.resolvePath = resolvePath;

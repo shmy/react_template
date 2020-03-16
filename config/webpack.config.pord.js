@@ -3,7 +3,7 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const merge = require('webpack-merge');
-const {config} = require('./webpack.config.common.js');
+const {config, getStyleLoaders} = require('./webpack.config.common.js');
 
 module.exports = merge(config, {
 	stats: {
@@ -16,21 +16,7 @@ module.exports = merge(config, {
 	},
 	module: {
 		rules: [
-			{
-				test: /\.css$/,
-				use: [
-					MiniCssExtractPlugin.loader,
-					{loader: 'css-loader', options: {modules: true, sourceMap: true}},
-				]
-			},
-			{
-				test: /\.(scss)|(sass)$/,
-				use: [
-					MiniCssExtractPlugin.loader,
-					{loader: 'css-loader', options: {modules: true, sourceMap: true}},
-					{loader: 'sass-loader', options: {sourceMap: true}}
-				],
-			},
+			...getStyleLoaders(true)
 		]
 	},
 	plugins: [
