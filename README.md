@@ -7,7 +7,7 @@
 [x] Proxy 代理  
 [x] 图像文件 按需转换Base64或者转移目录  
 [x] jest enzyme to unit test  
-[ ] cypress to unit test  
+[ ] cypress to e2e test  
 [ ] .ENV  
 [ ] eslint  
 [ ] prettier  
