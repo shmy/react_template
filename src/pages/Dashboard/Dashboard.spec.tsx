@@ -22,9 +22,9 @@ describe('Test Dashboard', () => {
   });
 
   it('should render without crashing to navigate', () => {
-    routerHistory.push('/application');
+    routerHistory.push('/system/application');
     mount(<ComponentWithRouter/>);
-    routerHistory.push('/personnel');
+    routerHistory.push('/system/personnel');
     mount(<ComponentWithRouter/>);
     routerHistory.push('/--not-found--');
     mount(<ComponentWithRouter/>);
