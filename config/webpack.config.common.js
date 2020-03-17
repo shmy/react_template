@@ -11,7 +11,7 @@ exports.config = {
 	devtool: "inline-source-map",
 	output: {
 		filename: "js/~app.[name].[hash].js",
-		chunkFilename: '~js/chunk.[name].[hash].js',
+		chunkFilename: 'js/~chunk.[name].[hash].js',
 		path: resolvePath("dist"),
 		publicPath: "/"
 	},
