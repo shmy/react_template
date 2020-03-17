@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {Avatar, Dropdown, Layout, Menu} from "antd";
 import { LogoutOutlined } from '@ant-design/icons';
 import styles from "./Dashboard.module.scss";
-import history from "@/utils/history";
+import {RouteComponentProps} from "react-router-dom";
 
-const Dashboard: React.FC = props => {
+const Dashboard: React.FC<RouteComponentProps> = props => {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <Layout className={styles.dashboard}>
@@ -18,7 +18,7 @@ const Dashboard: React.FC = props => {
           <Dropdown overlay={
             <Menu>
               <Menu.Item onClick={() => {
-                history.replace('/login');
+                props.history.replace('/login');
               }}><LogoutOutlined />退出登录</Menu.Item>
             </Menu>
           } trigger={['hover']}>
