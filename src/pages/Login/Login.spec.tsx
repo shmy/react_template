@@ -1,6 +1,6 @@
 import React from 'react';
 import {mount} from 'enzyme';
-import Login from '../Login';
+import Login from './Login';
 import {Button, Form, Input} from "antd";
 
 describe('Test Login', () => {
