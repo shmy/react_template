@@ -11,5 +11,6 @@ module.exports = {
 		"\\.(jpg|jpeg|png|svg|bmp|css|scss)$": "identity-obj-proxy",
 		"^@/(.*)$": "<rootDir>/src/$1",
 	},
-	setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts']
+	setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+	testPathIgnorePatterns: ['<rootDir>/cypress/*']
 };

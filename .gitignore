@@ -5,3 +5,4 @@
 *dist/
 *build/
 *coverage/
+/cypress/integration/examples/
