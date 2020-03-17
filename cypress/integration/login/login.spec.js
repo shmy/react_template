@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-context('Actions', () => {
+describe('Test Login', () => {
 	beforeEach(() => {
 		cy.visit('http://localhost:8080/login')
 	});

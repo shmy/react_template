@@ -6,3 +6,5 @@
 *build/
 *coverage/
 /cypress/integration/examples/
+/cypress/videos/
+/cypress/screenshots/
