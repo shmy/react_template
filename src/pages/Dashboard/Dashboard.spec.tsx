@@ -26,5 +26,7 @@ describe('Test Dashboard', () => {
     mount(<ComponentWithRouter/>);
     routerHistory.push('/personnel');
     mount(<ComponentWithRouter/>);
+    routerHistory.push('/--not-found--');
+    mount(<ComponentWithRouter/>);
   });
 });

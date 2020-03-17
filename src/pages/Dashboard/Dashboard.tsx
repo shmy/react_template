@@ -1,8 +1,8 @@
 import React, {lazy, Suspense, useState} from 'react';
-import {Avatar, Dropdown, Layout, Menu} from "antd";
-import {LogoutOutlined} from '@ant-design/icons';
+import {Avatar, Button, Dropdown, Layout, Menu, Result} from "antd";
+import {HomeOutlined, LogoutOutlined} from '@ant-design/icons';
 import styles from "./Dashboard.module.scss";
-import {Route, RouteComponentProps, Switch} from "react-router-dom";
+import {Link, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 
 const Routes: React.FC = () => {
   return (
@@ -10,6 +10,10 @@ const Routes: React.FC = () => {
       <Switch>
         <Route exact path="/application" component={lazy(() => import('../Frames/Application/Application'))}/>
         <Route exact path="/personnel" component={lazy(() => import('../Frames/Personnel/Personnel'))}/>
+        {/*index*/}
+        <Redirect exact path="/" to="/application"/>
+        {/*404*/}
+        <Route render={() => <Result title="页面不存在" status="404" extra={<Link component={(props) => <Button onClick={props.navigate} type="primary">{props.children}</Button>} to="/"><HomeOutlined/>点击返回首页</Link>}/>}/>
       </Switch>
     </Suspense>
   );
