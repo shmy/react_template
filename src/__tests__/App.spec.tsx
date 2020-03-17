@@ -5,15 +5,14 @@ import {createMemoryHistory} from 'history'
 import {Router} from "react-router-dom";
 
 const history = createMemoryHistory();
-const MockRouter = (props) => <Router history={history}>{props.children}</Router>
-
+const ComponentWithRouter = () => <Router history={history}><App/></Router>;
 
 describe('Test App.tsx', () => {
   it('should render without crashing', () => {
-    mount(<MockRouter><App/></MockRouter>);
+    mount(<ComponentWithRouter />);
   });
   it('should render without crashing to login', () => {
     history.push('/login');
-    mount(<MockRouter><App/></MockRouter>);
+    mount(<ComponentWithRouter />);
   });
 });

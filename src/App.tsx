@@ -1,5 +1,5 @@
 import React, {lazy, Suspense} from 'react';
-import {Switch, Route, RouteComponentProps} from 'react-router-dom';
+import {Switch, Route} from 'react-router-dom';
 
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
 const Login = lazy(() => import('./pages/Login/Login'));
