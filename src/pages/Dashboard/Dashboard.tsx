@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {lazy, Suspense, useState} from 'react';
 import {Avatar, Dropdown, Layout, Menu} from "antd";
 import { LogoutOutlined } from '@ant-design/icons';
 import styles from "./Dashboard.module.scss";
-import {RouteComponentProps} from "react-router-dom";
+import {Route, RouteComponentProps, Switch} from "react-router-dom";
 
 const Dashboard: React.FC<RouteComponentProps> = props => {
   const [collapsed, setCollapsed] = useState(false);
@@ -25,7 +25,14 @@ const Dashboard: React.FC<RouteComponentProps> = props => {
             <Avatar style={{backgroundColor: '#87d068'}}>U</Avatar>
           </Dropdown>
         </Layout.Header>
-        <Layout.Content>Content</Layout.Content>
+        <Layout.Content>
+          <Suspense fallback={<></>}>
+            <Switch>
+              <Route exact path="/application" component={lazy(() => import('../Frames/Application/Application'))} />
+              <Route exact path="/personnel" component={lazy(() => import('../Frames/Personnel/Personnel'))} />
+            </Switch>
+          </Suspense>
+        </Layout.Content>
       </Layout>
     </Layout>
   );

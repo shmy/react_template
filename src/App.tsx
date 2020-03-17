@@ -8,8 +8,8 @@ const App: React.FC = () => {
   return (
     <Suspense fallback={<></>}>
       <Switch>
-        <Route exact path="/" component={Dashboard}/>
         <Route exact path="/login" component={Login}/>
+        <Route path="/" component={Dashboard}/>
       </Switch>
     </Suspense>
   );
