@@ -2,12 +2,6 @@ import React from 'react';
 import {mount} from "enzyme";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import {Dropdown, Menu} from "antd";
-// import history from "@/utils/history";
-// jest.mock('@/utils/history', () => {
-//   return {
-//     replace: jest.fn(),
-//   };
-// });
 
 describe('Test Dashboard', () => {
   it('should render without crashing', () => {

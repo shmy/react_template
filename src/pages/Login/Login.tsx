@@ -1,10 +1,11 @@
 import React from 'react';
 import {Button, Form, Input} from "antd";
 import styles from './Login.module.scss';
+import {RouteComponentProps} from "react-router-dom";
 
-const Login: React.FC = props => {
+const Login: React.FC<RouteComponentProps> = props => {
   const handleSubmit = (values) => {
-    console.log(values);
+    props.history.replace('/');
   };
   return (
     <div className={styles.login}>
