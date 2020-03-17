@@ -1,10 +1,19 @@
 import React from 'react';
 import App from '../App';
-import {shallow} from 'enzyme';
+import {mount} from 'enzyme';
+import {createMemoryHistory} from 'history'
+import {Router} from "react-router-dom";
+
+const history = createMemoryHistory();
+const MockRouter = (props) => <Router history={history}>{props.children}</Router>
 
 
 describe('Test App.tsx', () => {
   it('should render without crashing', () => {
-    shallow(<App/>);
+    mount(<MockRouter><App/></MockRouter>);
+  });
+  it('should render without crashing to login', () => {
+    history.push('/login');
+    mount(<MockRouter><App/></MockRouter>);
   });
 });

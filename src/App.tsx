@@ -1,17 +1,17 @@
 import React, {lazy, Suspense} from 'react';
-import logo from "@/assets/logo.png";
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import {Switch, Route, RouteComponentProps} from 'react-router-dom';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Login = lazy(() => import('./pages/Login/Login'));
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <Suspense fallback={<></>}>
-        <Switch>
-          <Route exact path="/" component={lazy(() => import('./pages/Dashboard'))}/>
-          <Route exact path="/login" component={lazy(() => import('./pages/Login/Login'))}/>
-        </Switch>
-      </Suspense>
-    </Router>
+    <Suspense fallback={<></>}>
+      <Switch>
+        <Route exact path="/" component={Dashboard}/>
+        <Route exact path="/login" component={Login}/>
+      </Switch>
+    </Suspense>
   );
 };
 
