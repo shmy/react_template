@@ -18,12 +18,13 @@ const menus: IMenu[] = [
         name: '应用管理',
         icon: <HomeOutlined/>,
       },
-      {
-        path: '/system/personnel',
-        name: '人员管理',
-        icon: <HomeOutlined/>
-      }
+
     ]
   },
+  {
+    path: '/system/personnel',
+    name: '人员管理',
+    icon: <HomeOutlined/>
+  }
 ];
 export default menus;

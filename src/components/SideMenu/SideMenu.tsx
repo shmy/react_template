@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useRef, useState} from 'react';
+import React, {ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import {Layout, Menu} from "antd";
 import menus, {IMenu} from "@/utils/menu";
 import history from "@/utils/history";
@@ -9,11 +9,11 @@ const getMenu = (menus: IMenu[]) => {
   const result: ReactElement[] = [];
   for (const menu of menus) {
     if (menu.children) {
-      result.push(<Menu.SubMenu title={menu.name} key={menu.path}>
+      result.push(<Menu.SubMenu title={<>{menu.icon}<span>{menu.name}</span></>} key={menu.path}>
         {getMenu(menu.children)}
       </Menu.SubMenu>)
     } else {
-      result.push(<Menu.Item onClick={() => history.push(menu.path)} key={menu.path}>{menu.name}</Menu.Item>)
+      result.push(<Menu.Item onClick={() => history.push(menu.path)} key={menu.path}>{menu.icon}<span>{menu.name}</span></Menu.Item>)
     }
   }
   return result;
@@ -29,28 +29,24 @@ const parseModule = (pathname: string) => {
 const SideMenu: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
-  const [openKeys, setOpenKeys] = useState<string[]>([]);
   const unregisterCallback = useRef<UnregisterCallback>();
-
+  const defaultOpenKeys = useMemo(() => {
+    return parseModule(history.location.pathname);
+  }, [history.location.pathname]);
   useEffect(() => {
-    const {pathname} = history.location;
-    setSelectedKey(pathname);
-    setOpenKeys(parseModule(pathname));
+    setSelectedKey(history.location.pathname);
     unregisterCallback.current = history.listen(({pathname}) => {
       setSelectedKey(pathname);
-      setOpenKeys(parseModule(pathname));
     });
     return () => {
       unregisterCallback.current && unregisterCallback.current();
     };
   }, []);
   return (
-    <Layout.Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
+    <Layout.Sider className={styles.scroller} collapsible collapsed={collapsed} onCollapse={setCollapsed}>
       <Menu theme="dark" mode="inline"
-            onOpenChange={setOpenKeys}
-            openKeys={openKeys}
+            defaultOpenKeys={defaultOpenKeys}
             selectedKeys={[selectedKey]}>
-        <div className={styles.logo}/>
         {...getMenu(menus)}
       </Menu>
     </Layout.Sider>

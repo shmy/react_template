@@ -14,7 +14,7 @@ const Routes: React.FC = () => {
         {/*index*/}
         <Redirect exact path="/" to="/system/application"/>
         {/*404*/}
-        <Route render={() => <Result title="页面不存在" status="404" extra={<Link component={(props) => <Button onClick={props.navigate} type="primary">{props.children}</Button>} to="/"><HomeOutlined/>点击返回首页</Link>}/>}/>
+        <Route exact render={() => <Result title="页面不存在" status="404" extra={<Link component={(props) => <Button onClick={props.navigate} type="primary">{props.children}</Button>} to="/"><HomeOutlined/>点击返回首页</Link>}/>}/>
       </Switch>
     </Suspense>
   );
@@ -27,8 +27,7 @@ const Dashboard: React.FC<RouteComponentProps> = props => {
   };
   return (
     <Layout className={styles.dashboard}>
-      <SideMenu/>
-      <Layout>
+
         <Layout.Header className={styles.header}>
           <div className={styles.headerContent}/>
           <Dropdown overlay={
@@ -39,6 +38,9 @@ const Dashboard: React.FC<RouteComponentProps> = props => {
             <Avatar style={{backgroundColor: '#87d068'}}>U</Avatar>
           </Dropdown>
         </Layout.Header>
+      <Layout>
+        <SideMenu/>
+
         <Layout.Content>
           <Routes/>
         </Layout.Content>
