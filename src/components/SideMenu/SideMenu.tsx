@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, ReactElement, useEffect, useMemo, useRef, useState} from 'react';
 import {Layout, Menu} from "antd";
 import menus, {IMenu} from "@/utils/menu";
 import history from "@/utils/history";
@@ -26,7 +26,7 @@ const parseModule = (pathname: string) => {
   return ['/' + paths[1]];
 };
 
-const SideMenu: React.FC = () => {
+const SideMenu: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState('');
   const unregisterCallback = useRef<UnregisterCallback>();

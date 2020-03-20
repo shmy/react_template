@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {FC} from 'react';
 
-const Personnel: React.FC = props => {
+const Personnel: FC = props => {
   return (
     <div>Personnel</div>
   );

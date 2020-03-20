@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {Button, Form, Input} from "antd";
 import styles from './Login.module.scss';
 import {RouteComponentProps} from "react-router-dom";
 
-const Login: React.FC<RouteComponentProps> = props => {
+const Login: FC<RouteComponentProps> = props => {
   const handleSubmit = (values) => {
     props.history.replace('/');
   };
