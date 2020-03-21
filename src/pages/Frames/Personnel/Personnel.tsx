@@ -131,6 +131,7 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
           realName: row.realName,
           phone: row.phone,
           email: row.email,
+          enable: row.enable,
         });
       }
     };
