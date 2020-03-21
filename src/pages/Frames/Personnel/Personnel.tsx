@@ -34,7 +34,7 @@ const columns = [
 
 const layout = {
   labelCol: {span: 4},
-  wrapperCol: {span: 16},
+  wrapperCol: {span: 20},
 };
 const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
   const {run: createRun, loading: createLoading} = useRequest<AfterResponse<any>>((data) => http.post("/v1/personnel", data), {
@@ -82,15 +82,13 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
     {
       label: "头像",
       name: "avatarUrl",
-      rules: [
-        // getRequiredRule("用户名"),
-      ],
+      rules: [],
       render: () => <SingleImageUpload/>,
     },
     {
       label: "真实姓名",
       name: "realName",
-      render: () => <Input placeholder="请输入真实姓名"/>,
+      render: () => <Input placeholder="请输入真实姓名(可选)"/>,
     },
     {
       label: "手机号码",

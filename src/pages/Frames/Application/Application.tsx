@@ -6,7 +6,7 @@ import {SearchOutlined, LoginOutlined, SettingOutlined} from '@ant-design/icons'
 import {RouteComponentProps} from "react-router-dom";
 import {useDebounce, useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
-import {fields, initialValues} from "@/pages/Frames/Application/BasicSetting";
+import {fields, initialValues, layout} from "@/pages/Frames/Application/BasicSetting";
 import {SERVER_STATIC_PATH} from "@/components/SingleImageUpload/SingleImageUpload";
 
 const ApplicationModal = (props: { onAdded: () => void }, ref) => {
@@ -42,7 +42,7 @@ const ApplicationModal = (props: { onAdded: () => void }, ref) => {
            onCancel={() => setVisible(false)}
            footer={null}
     >
-      <Form onFinish={handleSubmit} initialValues={initialValues} layout="horizontal">
+      <Form {...layout} onFinish={handleSubmit} initialValues={initialValues} layout="horizontal">
         <Spin spinning={loading} delay={300}>
           {fields.map(field => {
             return (

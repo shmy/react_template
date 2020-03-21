@@ -14,7 +14,7 @@ export const fields = [
     label: "应用名称",
     name: "name",
     rules: [
-      // getRequiredRule("应用名称"),
+      getRequiredRule("应用名称"),
     ],
     render: () => <Input placeholder="应用名称"/>,
   },
@@ -22,7 +22,7 @@ export const fields = [
     label: "应用logo",
     name: "logoUrl",
     rules: [
-      // getRequiredRule("应用logo", false),
+      getRequiredRule("应用logo", false),
     ],
     render: () => <SingleImageUpload/>,
   },
@@ -30,15 +30,15 @@ export const fields = [
     label: "应用地址",
     name: "url",
     rules: [
-      // getRequiredRule("应用地址"),
-      // getUrlRule("应用地址"),
+      getRequiredRule("应用地址"),
+      getUrlRule("应用地址"),
     ],
     render: () => <Input placeholder="应用地址"/>,
   },
   {
     label: "应用简介",
     name: "intro",
-    render: () => <Input placeholder="应用简介"/>,
+    render: () => <Input.TextArea rows={4} placeholder="应用简介(可选)"/>,
   },
   {
     label: "启用状态",
@@ -48,7 +48,10 @@ export const fields = [
   }
 ];
 export const initialValues = {enable: true};
-
+export const layout = {
+  labelCol: {span: 5},
+  wrapperCol: {span: 19},
+};
 const BasicSetting: FC<BasicSettingProps> = props => {
   const {loading, data} = useRequest(() => http.get('/v1/app/' + props.id));
   const {loading: updateLoading, run} = useRequest<AfterResponse<any>>((data) => http.put('/v1/app/' + props.id, data), {
@@ -76,7 +79,7 @@ const BasicSetting: FC<BasicSettingProps> = props => {
     }
   }, [data]);
   return (
-    <Form onFinish={handleSubmit} form={form} initialValues={initialValues} style={{width: '300px'}}
+    <Form {...layout} onFinish={handleSubmit} form={form} initialValues={initialValues} style={{width: '400px'}}
           layout="horizontal">
       <Spin delay={300} spinning={loading || updateLoading}>
         {fields.map(field => {

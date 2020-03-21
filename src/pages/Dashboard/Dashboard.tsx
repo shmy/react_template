@@ -9,11 +9,11 @@ const Routes: FC = () => {
   return (
     <Suspense fallback={<></>}>
       <Switch>
-        <Route exact path="/system/application" component={lazy(() => import('../Frames/Application/Application'))}/>
-        <Route exact path="/system/application/:id" component={lazy(() => import('../Frames/Application/Detail'))}/>
-        <Route exact path="/system/personnel" component={lazy(() => import('../Frames/Personnel/Personnel'))}/>
+        <Route exact path="/application" component={lazy(() => import('../Frames/Application/Application'))}/>
+        <Route exact path="/application/:id" component={lazy(() => import('../Frames/Application/Detail'))}/>
+        <Route exact path="/personnel" component={lazy(() => import('../Frames/Personnel/Personnel'))}/>
         {/*index*/}
-        <Redirect exact path="/" to="/system/application"/>
+        <Redirect exact path="/" to="/application"/>
         {/*404*/}
         <Route exact render={() => <Result title="页面不存在" status="404" extra={<Link component={(props) => <Button onClick={props.navigate} type="primary">{props.children}</Button>} to="/"><HomeOutlined/>点击返回首页</Link>}/>}/>
       </Switch>
