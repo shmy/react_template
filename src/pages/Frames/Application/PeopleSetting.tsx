@@ -1,7 +1,7 @@
 import React, {FC, forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import {useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
-import {message as AntMessage, Button, Card, Form, Modal, Select, Table} from "antd";
+import {message as AntMessage, Button, Card, Form, Modal, Select, Table, Checkbox, Spin} from "antd";
 import {columns} from "@/pages/Frames/Personnel/Personnel";
 import {PlusOutlined} from '@ant-design/icons';
 import {getRequiredRule} from "@/rules";
@@ -13,7 +13,7 @@ interface PeopleSettingProps {
 
 const PeopleModal = (props: { appId: number, onComplete: () => void }, ref) => {
   const [visible, setVisible] = useState(false);
-  const {data, loading, run} = useRequest<AfterResponse<any>>((appId, data) => http.get('/v1/personnel/option'), {
+  const {data, loading, run} = useRequest<AfterResponse<any>>(() => http.get('/v1/personnel/option'), {
     manual: true,
   });
   const {run: submitRun, loading: submitting} = useRequest((appId: number, ids: number[]) => {
@@ -95,10 +95,81 @@ const PeopleModal = (props: { appId: number, onComplete: () => void }, ref) => {
 };
 const PeopleModalWithForward = forwardRef(PeopleModal);
 
+const CheckboxComponent: FC<{ onChange: () => void; label: string, value: boolean }> = props => {
+  return (
+    <div>
+      <Checkbox checked={props.value} onChange={props.onChange}>{props.label}</Checkbox>
+    </div>
+  );
+};
+const RoleModal = (props: { appId: number }, ref) => {
+  const [visible, setVisible] = useState(false);
+  const [personnelId, setPersonnelId] = useState(0);
+  const {data, mutate, loading, run} = useRequest<AfterResponse<any>>((appId, personnelId) => http.get(`/v1/app/${appId}/personnel/${personnelId}/role`), {
+    manual: true,
+    loadingDelay: 300,
+  });
+  const {run: createRun, loading: createLoading} = useRequest<AfterResponse<any>>((appId: number, personnelId: number, name: string) => {
+    return http.post(`/v1/app/${appId}/personnel/${personnelId}/role`, {name});
+  }, {
+    manual: true,
+    loadingDelay: 300,
+  });
+  const {run: removeRun, loading: removeLoading} = useRequest<AfterResponse<any>>((appId: number, personnelId: number, name: string) => {
+    return http.delete(`/v1/app/${appId}/personnel/${personnelId}/role`, {params: {name}});
+  }, {
+    manual: true,
+    loadingDelay: 300,
+  });
+  const isLoading = loading || createLoading || removeLoading;
+  const handleChange = (item, index: number) => {
+    const fn = !item.value ? () => createRun(props.appId, personnelId, item.label) : () => removeRun(props.appId, personnelId, item.label);
+    fn().then(result => {
+      if (result === true) {
+        mutate(data => {
+          data[index].value = !item.value;
+          return data;
+        });
+      }
+    });
+  };
+  useImperativeHandle(ref, () => {
+    return {
+      open(personnelId) {
+        setPersonnelId(personnelId);
+        setVisible(true);
+        run(props.appId, personnelId);
+      },
+    };
+  });
+  return (
+    <Modal title="分配角色"
+           keyboard={!isLoading}
+           maskClosable={!isLoading}
+           closable={!isLoading}
+           forceRender
+           visible={visible}
+           onCancel={() => setVisible(false)}
+           footer={null}
+    >
+      <Spin spinning={isLoading}>
+        {(data || []).map((item, index) => {
+          return (
+            <CheckboxComponent onChange={() => handleChange(item, index)} key={item.label} value={item.value}
+                               label={item.label}/>
+          );
+        })}
+      </Spin>
+    </Modal>
+  );
+};
+const RoleModalWithForward = forwardRef(RoleModal);
+
 const PeopleSetting: FC<PeopleSettingProps> = props => {
   const {data, refresh} = useRequest(() => http.get('/v1/app/' + props.id + '/personnel'));
-  const {run: removeRun} = useRequest<AfterResponse<any>>((personnelId) => http.delete('/v1/app/' + props.id + '/personnel', {params: {id: personnelId}}));
+  const {run: removeRun} = useRequest<AfterResponse<any>>((personnelId) => http.delete('/v1/app/' + props.id + '/personnel', {params: {id: personnelId}}), {manual: true});
   const ref = useRef<{ open: () => void }>(null);
+  const ref2 = useRef<{ open: (id: number) => void }>(null);
   const handleRemove = id => {
     removeRun(id).then(result => {
       if (isHttpError(result)) {
@@ -111,6 +182,7 @@ const PeopleSetting: FC<PeopleSettingProps> = props => {
   return (
     <div>
       <PeopleModalWithForward onComplete={refresh} appId={props.id} ref={ref}/>
+      <RoleModalWithForward appId={props.id} ref={ref2}/>
       <Card extra={
         <>
           <Button onClick={() => ref.current && ref.current.open()} type="primary"><PlusOutlined/>添加人员</Button>
@@ -127,7 +199,7 @@ const PeopleSetting: FC<PeopleSettingProps> = props => {
                    render: (row) => {
                      return (
                        <>
-                         <Button type="link">授权</Button>
+                         <Button onClick={() => ref2.current && ref2.current.open(row.id)} type="link">授权</Button>
                          <Button onClick={() => handleRemove(row.id)} type="link">移除</Button>
                        </>
                      );
