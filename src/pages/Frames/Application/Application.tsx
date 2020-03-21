@@ -5,17 +5,21 @@ import styles from "./Application.module.scss";
 import {SearchOutlined, LoginOutlined, SettingOutlined} from '@ant-design/icons';
 import {RouteComponentProps} from "react-router-dom";
 import {useDebounce, useRequest} from "@umijs/hooks";
-import http from "@/utils/http";
+import http, {AfterResponse, isHttpError} from "@/utils/http";
 import {fields, initialValues} from "@/pages/Frames/Application/BasicSetting";
 import {SERVER_STATIC_PATH} from "@/components/SingleImageUpload/SingleImageUpload";
 
 const ApplicationModal = (props: { onAdded: () => void }, ref) => {
   const [visible, setVisible] = useState(false);
-  const {loading, error, run} = useRequest((data) => http.post('/v1/app', data), {
+  const {loading, error, run} = useRequest<AfterResponse<any>>((data) => http.post('/v1/app', data), {
     manual: true,
   });
   const handleSubmit = (values) => {
-    run(values).then(() => {
+    run(values).then((result) => {
+      if (isHttpError(result)) {
+        result.showAlert();
+        return;
+      }
       AntMessage.success('添加成功');
       setVisible(false);
       props.onAdded();

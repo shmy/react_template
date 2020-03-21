@@ -1,24 +1,55 @@
-import getUrlValidator from "./url";
-import getPhoneValidator from "./phone";
-import getIdCardValidator from "./id-card";
-import getAmountValidator from "./amount";
+import {amountValidator, emailValidator, idCardValidator, phoneValidator, urlValidator} from "@/rules/validator";
+
+const getOptionalRule = (fn: Function) => {
+  return {
+    validator: (rule, value, callback) => {
+      if (!value) {
+        callback();
+        return;
+      }
+      fn(rule, value, callback);
+    }
+  };
+};
 
 export const getRequiredRule = (field, input = true) => {
-  return { required: true, message: "请" + (input ? "输入" : "选择") + field};
+  return {required: true, message: "请" + (input ? "输入" : "选择") + field};
 };
 export const getUrlRule = field => {
-  return { validator: getUrlValidator(field)};
+  return {validator: urlValidator(field)};
 };
-export const getPhoneRule = field => {
-  return { validator: getPhoneValidator(field)};
-};
-export const getIdCardRule = field => {
-  return { validator: getIdCardValidator(field)};
-};
-export const getAmountRule = field => {
-  return { validator: getAmountValidator(field, true)};
-};
-export const getAmountRuleWithOutRequired = field => {
-  return { validator: getAmountValidator(field, false)};
+export const getUrlOptionalRule = field => {
+  return getOptionalRule(urlValidator(field));
 };
 
+export const getPhoneRule = field => {
+  return {validator: phoneValidator(field)};
+};
+
+export const getPhoneOptionalRule = field => {
+  return getOptionalRule(phoneValidator(field));
+};
+
+export const getIdCardRule = field => {
+  return {validator: idCardValidator(field)};
+};
+
+export const getIdCardOptionalRule = field => {
+  return getOptionalRule(idCardValidator(field));
+};
+
+export const getAmountRule = field => {
+  return {validator: amountValidator(field)};
+};
+
+export const getAmountOptionalRule = field => {
+  return getOptionalRule(amountValidator(field));
+};
+
+export const getEmailRule = field => {
+  return {validator: emailValidator(field)};
+};
+
+export const getEmailOptionalRule = field => {
+  return getOptionalRule(emailValidator(field));
+};

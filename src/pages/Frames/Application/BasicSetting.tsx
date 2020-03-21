@@ -1,7 +1,7 @@
 import React, {FC, useEffect} from 'react';
 import {message as AntMessage, Button, Form, Input, Spin, Switch, Upload} from "antd";
 import {useRequest} from "@umijs/hooks";
-import http from "@/utils/http";
+import http, {AfterResponse, isHttpError} from "@/utils/http";
 import SingleImageUpload from "@/components/SingleImageUpload/SingleImageUpload";
 import {getRequiredRule, getUrlRule} from "@/rules";
 
@@ -14,7 +14,7 @@ export const fields = [
     label: "应用名称",
     name: "name",
     rules: [
-      getRequiredRule("应用名称"),
+      // getRequiredRule("应用名称"),
     ],
     render: () => <Input placeholder="应用名称"/>,
   },
@@ -22,7 +22,7 @@ export const fields = [
     label: "应用logo",
     name: "logoUrl",
     rules: [
-      getRequiredRule("应用logo", false),
+      // getRequiredRule("应用logo", false),
     ],
     render: () => <SingleImageUpload/>,
   },
@@ -30,8 +30,8 @@ export const fields = [
     label: "应用地址",
     name: "url",
     rules: [
-      getRequiredRule("应用地址"),
-      getUrlRule("应用地址"),
+      // getRequiredRule("应用地址"),
+      // getUrlRule("应用地址"),
     ],
     render: () => <Input placeholder="应用地址"/>,
   },
@@ -51,12 +51,16 @@ export const initialValues = {enable: true};
 
 const BasicSetting: FC<BasicSettingProps> = props => {
   const {loading, data} = useRequest(() => http.get('/v1/app/' + props.id));
-  const {loading: updateLoading, run} = useRequest((data) => http.put('/v1/app/' + props.id, data), {
+  const {loading: updateLoading, run} = useRequest<AfterResponse<any>>((data) => http.put('/v1/app/' + props.id, data), {
     manual: true,
   });
   const [form] = Form.useForm();
   const handleSubmit = (values) => {
-    run(values).then(() => {
+    run(values).then((result) => {
+      if (isHttpError(result)) {
+        result.showAlert();
+        return;
+      }
       AntMessage.success('保存成功');
     });
   };
