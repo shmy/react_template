@@ -20,7 +20,7 @@ export const fields = [
   },
   {
     label: "应用logo",
-    name: "logoUrl",
+    name: "logo_url",
     rules: [
       getRequiredRule("应用logo", false),
     ],
@@ -72,7 +72,7 @@ const BasicSetting: FC<BasicSettingProps> = props => {
       form.setFieldsValue({
         name: (data as any).name,
         url: (data as any).url,
-        logoUrl: (data as any).logoUrl,
+        logo_url: (data as any).logo_url,
         intro: (data as any).intro,
         enable: (data as any).enable,
       })

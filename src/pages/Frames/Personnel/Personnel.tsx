@@ -7,13 +7,13 @@ import SingleImageUpload, {SERVER_STATIC_PATH} from "@/components/SingleImageUpl
 import Frame from "@/components/Frame/Frame";
 import {SearchOutlined, PlusOutlined} from '@ant-design/icons';
 
-const columns = [
+export const columns = [
   {title: '用户名', width: 140, dataIndex: 'username'},
   {
     title: '头像',
     width: 50,
     align: 'center',
-    dataIndex: 'avatarUrl',
+    dataIndex: 'avatar_url',
     render: (text: string) => {
       return <Avatar size="small" shape="square" src={SERVER_STATIC_PATH + text}/>;
     }
@@ -27,7 +27,7 @@ const columns = [
       return <Tag color={enable ? 'success' : 'warning'}>{enable ? '启用' : '禁用'}</Tag>
     }
   },
-  {title: '真实姓名', width: 120, dataIndex: 'realName'},
+  {title: '真实姓名', width: 120, dataIndex: 'real_name'},
   {title: '电话号码', width: 120, dataIndex: 'phone'},
   {title: '邮箱', dataIndex: 'email'},
 ];
@@ -81,13 +81,13 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
     },
     {
       label: "头像",
-      name: "avatarUrl",
+      name: "avatar_url",
       rules: [],
       render: () => <SingleImageUpload/>,
     },
     {
       label: "真实姓名",
-      name: "realName",
+      name: "real_name",
       render: () => <Input placeholder="请输入真实姓名(可选)"/>,
     },
     {
@@ -125,8 +125,8 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
         id.current = row.id;
         form.setFieldsValue({
           username: row.username,
-          avatarUrl: row.avatarUrl,
-          realName: row.realName,
+          avatarUrl: row.avatar_url,
+          realName: row.real_name,
           phone: row.phone,
           email: row.email,
           enable: row.enable,

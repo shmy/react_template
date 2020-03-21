@@ -104,7 +104,7 @@ const Application: FC<RouteComponentProps> = props => {
               ]} hoverable>
                 <div>
                   <Avatar size="large"
-                          src={SERVER_STATIC_PATH + app.logoUrl}/>
+                          src={SERVER_STATIC_PATH + app.logo_url}/>
                   <span className={styles.appTitle}>{app.name}</span>
                 </div>
                 <p className={styles.appIntro}>{app.intro}</p>
