@@ -1,10 +1,11 @@
-import React, {FC, forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState} from 'react';
+import React, {FC, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {Avatar, Button, Card, Form, Input, Modal, Pagination, Switch, Table, Tag} from "antd";
-import {useRequest} from "@umijs/hooks";
+import {useDebounce, useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
 import {getEmailOptionalRule, getPhoneOptionalRule, getRequiredRule} from "@/rules";
 import SingleImageUpload, {SERVER_STATIC_PATH} from "@/components/SingleImageUpload/SingleImageUpload";
 import Frame from "@/components/Frame/Frame";
+import {SearchOutlined, PlusOutlined} from '@ant-design/icons';
 
 const columns = [
   {title: '用户名', width: 140, dataIndex: 'username'},
@@ -165,14 +166,18 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
 // @ts-ignore
 const PersonnelModalWithRef = forwardRef(PersonnelModal);
 const Personnel: FC = props => {
-  const {data, refresh, loading, pagination} = useRequest(({current, pageSize}) => {
+  const [q, setQ] = useState("");
+  const debouncedQ = useDebounce(q, 300);
+  const {data, refresh, params, loading, pagination} = useRequest(({current, pageSize, filters}) => {
     return http.get("/v1/personnel", {
       params: {
         page: current,
         per_page: pageSize,
+        q: debouncedQ,
       }
     });
   }, {
+    manual: false,
     paginated: true,
     loadingDelay: 300,
     formatResult: (v: any) => {
@@ -180,7 +185,9 @@ const Personnel: FC = props => {
         list: v.result,
         total: v.count,
       };
-    }
+    },
+    defaultLoading: true,
+    refreshDeps: [debouncedQ]
   });
   const ref = useRef<{
     open: () => void;
@@ -190,21 +197,27 @@ const Personnel: FC = props => {
   return (
     <Frame>
       <PersonnelModalWithRef onComplete={refresh} ref={ref}/>
-      <Card>
-        <Button onClick={() => {
-          if (ref.current) {
-            ref.current.open();
-          }
-        }}>新建</Button>
-      </Card>
-
-      <Card style={{marginTop: '20px'}}>
-        <Table loading={loading} size="small" bordered pagination={false} rowKey="id" dataSource={data?.list} columns={[
+      <Card title={<>
+        <Input value={q} onChange={e => setQ(e.target.value)} allowClear prefix={<SearchOutlined/>} style={{width: '240px'}} placeholder="输入关键字搜索"/>
+      </>}
+            extra={
+              <>
+                <Button type="primary" onClick={() => {
+                  if (ref.current) {
+                    ref.current.open();
+                  }
+                }}><PlusOutlined/>添加用户</Button>
+              </>
+            }
+            style={{marginTop: '20px'}}>
+        <Table tableLayout="fixed" loading={loading} size="small" bordered pagination={false} rowKey="id"
+               dataSource={data?.list} columns={[
           ...columns,
           {
             title: '操作',
             width: 80,
             align: 'center',
+            fixed: 'right',
             render: (row) => {
               return (
                 <>
