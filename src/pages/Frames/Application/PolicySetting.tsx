@@ -111,7 +111,7 @@ const columns = [
     dataIndex: 'action',
   },
 ];
-
+// TODO: 使用checkbox进行管理
 interface PolicySettingProps {
   id: number;
 }

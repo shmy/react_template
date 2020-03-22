@@ -1,4 +1,11 @@
-import {amountValidator, emailValidator, idCardValidator, phoneValidator, urlValidator} from "@/rules/validator";
+import {
+  amountValidator,
+  emailValidator,
+  idCardValidator,
+  phoneValidator,
+  urlValidator,
+  usernameValidator
+} from "@/rules/validator";
 
 const getOptionalRule = (fn: Function) => {
   return {
@@ -14,6 +21,9 @@ const getOptionalRule = (fn: Function) => {
 
 export const getRequiredRule = (field, input = true) => {
   return {required: true, message: "请" + (input ? "输入" : "选择") + field};
+};
+export const getUserNameRule = field => {
+  return {validator: usernameValidator(field)};
 };
 export const getUrlRule = field => {
   return {validator: urlValidator(field)};

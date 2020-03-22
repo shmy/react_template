@@ -5,7 +5,7 @@ import history from "@/utils/history";
 import {Menu} from "antd";
 import {act} from "react-dom/test-utils";
 
-describe('Test SideMenu', () => {
+xdescribe('Test SideMenu', () => {
   it('should render without crashing', () => {
     const wrapper = mount(<SideMenu/>);
     act(() => {

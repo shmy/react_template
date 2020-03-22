@@ -1,13 +1,12 @@
 import React, {FC, forwardRef, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import Frame from "@/components/Frame/Frame";
-import {Avatar, Button, Card, Col, Form, Input, message as AntMessage, Modal, Row, Spin, Switch} from "antd";
-import styles from "./Application.module.scss";
-import {SearchOutlined, LoginOutlined, SettingOutlined} from '@ant-design/icons';
+import {Button, Card, Form, Input, message as AntMessage, Modal, Row, Spin} from "antd";
+import {SearchOutlined} from '@ant-design/icons';
 import {RouteComponentProps} from "react-router-dom";
 import {useDebounce, useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
 import {fields, initialValues, layout} from "@/pages/Frames/Application/BasicSetting";
-import {SERVER_STATIC_PATH} from "@/components/SingleImageUpload/SingleImageUpload";
+import AppItem from "@/components/AppItem/AppItem";
 
 const ApplicationModal = (props: { onAdded: () => void }, ref) => {
   const [visible, setVisible] = useState(false);
@@ -82,6 +81,7 @@ const Application: FC<RouteComponentProps> = props => {
       ref.current.open();
     }
   };
+
   return (
     <Frame>
       <ApplicationModalWithForward onAdded={refresh} ref={ref}/>
@@ -93,23 +93,7 @@ const Application: FC<RouteComponentProps> = props => {
       <Row style={{marginTop: '10px'}} gutter={[16, 16]}>
         {filteredItems.map(app => {
           return (
-            <Col key={app.id} xs={24} sm={12} md={8} lg={6} xxl={4}>
-              <Card actions={[
-                <Button type="link" onClick={() => {
-                  window.open(app.url + '?access_token=dsakj12hydsajkhsfdkjh');
-                }}><LoginOutlined/>进入</Button>,
-                <Button type="link" onClick={() => {
-                  props.history.push('application/' + app.id.toString());
-                }}><SettingOutlined/>管理</Button>
-              ]} hoverable>
-                <div>
-                  <Avatar size="large"
-                          src={SERVER_STATIC_PATH + app.logo_url}/>
-                  <span className={styles.appTitle}>{app.name}</span>
-                </div>
-                <p className={styles.appIntro}>{app.intro}</p>
-              </Card>
-            </Col>
+            <AppItem key={app.id} app={app} manageable/>
           );
         })}
       </Row>

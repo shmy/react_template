@@ -2,7 +2,7 @@ import React, {FC, forwardRef, useCallback, useEffect, useImperativeHandle, useM
 import {Avatar, Button, Card, Form, Input, Modal, Pagination, Switch, Table, Tag} from "antd";
 import {useDebounce, useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
-import {getEmailOptionalRule, getPhoneOptionalRule, getRequiredRule} from "@/rules";
+import {getEmailOptionalRule, getPhoneOptionalRule, getRequiredRule, getUserNameRule} from "@/rules";
 import SingleImageUpload, {SERVER_STATIC_PATH} from "@/components/SingleImageUpload/SingleImageUpload";
 import Frame from "@/components/Frame/Frame";
 import {SearchOutlined, PlusOutlined} from '@ant-design/icons';
@@ -68,8 +68,9 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
       name: "username",
       rules: [
         getRequiredRule("用户名"),
+        getUserNameRule("用户名"),
       ],
-      render: () => <Input placeholder="请输入用户名"/>,
+      render: () => <Input disabled={isEditMode} placeholder="请输入用户名"/>,
     },
     {
       label: isEditMode ? "重置密码" : "密码",
@@ -110,7 +111,7 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
       label: "启用状态",
       name: "enable",
       valuePropName: "checked",
-      render: () => <Switch/>,
+      render: () => <Switch disabled={id.current === 1}/>,
     }
   ], [isEditMode]);
   useImperativeHandle(ref, () => {
@@ -125,8 +126,8 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
         id.current = row.id;
         form.setFieldsValue({
           username: row.username,
-          avatarUrl: row.avatar_url,
-          realName: row.real_name,
+          avatar_url: row.avatar_url,
+          real_name: row.real_name,
           phone: row.phone,
           email: row.email,
           enable: row.enable,

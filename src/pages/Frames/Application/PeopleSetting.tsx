@@ -199,7 +199,7 @@ const PeopleSetting: FC<PeopleSettingProps> = props => {
                    render: (row) => {
                      return (
                        <>
-                         <Button onClick={() => ref2.current && ref2.current.open(row.id)} type="link">授权</Button>
+                         <Button onClick={() => ref2.current && ref2.current.open(row.id)} type="link">管理</Button>
                          <Button onClick={() => handleRemove(row.id)} type="link">移除</Button>
                        </>
                      );

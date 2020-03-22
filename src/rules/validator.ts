@@ -9,6 +9,8 @@ const baseRegValidator = (pattern: RegExp) => {
     };
   };
 };
+// 用户名验证
+export const usernameValidator = baseRegValidator(/^[a-zA-Z0-9]{1,}$/);
 // 手机号验证
 export const phoneValidator = baseRegValidator(/^1\d{10}$/);
 // url验证

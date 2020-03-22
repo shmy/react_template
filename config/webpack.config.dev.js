@@ -38,7 +38,35 @@ module.exports = merge(config, {
 				pathRewrite: {
 					"^/static": ""
 				}
+			},
+			"/sso": {
+				target: "http://localhost:3000/sso",
+				changeOrigin: true,
+				pathRewrite: {
+					"^/sso": ""
+				}
 			}
+			// "/api": {
+			// 	target: "https://sso.shmy.tech/api",
+			// 	changeOrigin: true,
+			// 	pathRewrite: {
+			// 		"^/api": ""
+			// 	}
+			// },
+			// "/static": {
+			// 	target: "https://sso.shmy.tech/static",
+			// 	changeOrigin: true,
+			// 	pathRewrite: {
+			// 		"^/static": ""
+			// 	}
+			// },
+			// "/sso": {
+			// 	target: "https://sso.shmy.tech/sso",
+			// 	changeOrigin: true,
+			// 	pathRewrite: {
+			// 		"^/sso": ""
+			// 	}
+			// }
 		}
 	},
 	plugins: [
