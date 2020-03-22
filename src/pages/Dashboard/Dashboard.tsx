@@ -34,7 +34,7 @@ export const useDashboardContext = () => {
   return value || getDefaultData();
 };
 const Dashboard: FC<RouteComponentProps> = props => {
-  const {loading, data} = useRequest<AfterResponse<any>>(() => http.get('/v1/personnel/initial_data'), {
+  const {loading, data} = useRequest<AfterResponse<any>>(() => http.get('/v1/initial_data'), {
     loadingDelay: 0,
     initialData: getDefaultData(),
   });

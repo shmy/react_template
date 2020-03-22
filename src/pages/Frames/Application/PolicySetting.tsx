@@ -72,7 +72,7 @@ const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
            keyboard={!isLoading}
            maskClosable={!isLoading}
            closable={!isLoading}
-           destroyOnClose
+           forceRender
            visible={visible}
            onCancel={() => setVisible(false)}
            footer={null}
@@ -101,10 +101,12 @@ const columns = [
   {
     title: '角色',
     dataIndex: 'subject',
+    width: 200,
   },
   {
     title: '对象',
     dataIndex: 'object',
+    width: 200,
   },
   {
     title: '动作',
@@ -149,12 +151,16 @@ const PolicySetting: FC<PolicySettingProps> = props => {
                    title: '操作',
                    width: 140,
                    render: (row) => {
-                     if (row.subject && row.object && row.action) {
+                     if (row.action) {
                        return (
                          <>
                            <Button onClick={() => {
                              if (ref.current) {
-                               ref.current.openEdit(row);
+                               ref.current.openEdit({
+                                 subject: row.$$subject,
+                                 object: row.$$object,
+                                 action: row.action,
+                               });
                              }
                            }} type="link">编辑</Button>
                            <Button onClick={() => handleRemove(row)} type="link">删除</Button>

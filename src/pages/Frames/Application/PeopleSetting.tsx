@@ -1,7 +1,7 @@
 import React, {FC, forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import {useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
-import {message as AntMessage, Button, Card, Form, Modal, Select, Table, Checkbox, Spin} from "antd";
+import {message as AntMessage, Button, Card, Form, Modal, Select, Table, Checkbox, Spin, Popconfirm} from "antd";
 import {columns} from "@/pages/Frames/Personnel/Personnel";
 import {PlusOutlined} from '@ant-design/icons';
 import {getRequiredRule} from "@/rules";
@@ -97,7 +97,7 @@ const PeopleModalWithForward = forwardRef(PeopleModal);
 
 const CheckboxComponent: FC<{ onChange: () => void; label: string, value: boolean }> = props => {
   return (
-    <div>
+    <div style={{padding: '10px 0'}}>
       <Checkbox checked={props.value} onChange={props.onChange}>{props.label}</Checkbox>
     </div>
   );
@@ -200,7 +200,9 @@ const PeopleSetting: FC<PeopleSettingProps> = props => {
                      return (
                        <>
                          <Button onClick={() => ref2.current && ref2.current.open(row.id)} type="link">管理</Button>
-                         <Button onClick={() => handleRemove(row.id)} type="link">移除</Button>
+                         <Popconfirm onConfirm={() => handleRemove(row.id)} title={<span>确实要移除吗？</span>} >
+                           <Button type="link">移除</Button>
+                         </Popconfirm>
                        </>
                      );
                    }

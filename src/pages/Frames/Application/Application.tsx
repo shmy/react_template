@@ -1,7 +1,7 @@
 import React, {FC, forwardRef, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import Frame from "@/components/Frame/Frame";
 import {Button, Card, Form, Input, message as AntMessage, Modal, Row, Spin} from "antd";
-import {SearchOutlined} from '@ant-design/icons';
+import {SearchOutlined, PlusOutlined} from '@ant-design/icons';
 import {RouteComponentProps} from "react-router-dom";
 import {useDebounce, useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
@@ -85,18 +85,20 @@ const Application: FC<RouteComponentProps> = props => {
   return (
     <Frame>
       <ApplicationModalWithForward onAdded={refresh} ref={ref}/>
-      <Card>
-        <Button onClick={handleClick} type="primary">添加应用</Button>
-        <Input value={keyword} onChange={(e: any) => setKeyword(e.target.value)} prefix={<SearchOutlined/>}
-               style={{width: '300px', marginLeft: '20px'}} placeholder="搜索应用" allowClear/>
+      <Card title={<Input value={keyword} onChange={(e: any) => setKeyword(e.target.value)} prefix={<SearchOutlined/>}
+                          style={{width: '240px'}} placeholder="搜索应用" allowClear/>}
+            extra={<Button onClick={handleClick} type="primary"><PlusOutlined/>添加应用</Button>}>
+
+
+        <Row style={{marginTop: '10px'}} gutter={[16, 16]}>
+          {filteredItems.map(app => {
+            return (
+              <AppItem key={app.id} app={app} manageable/>
+            );
+          })}
+        </Row>
       </Card>
-      <Row style={{marginTop: '10px'}} gutter={[16, 16]}>
-        {filteredItems.map(app => {
-          return (
-            <AppItem key={app.id} app={app} manageable/>
-          );
-        })}
-      </Row>
+
       <div style={{textAlign: 'center'}}><Spin spinning={loading} delay={300}/></div>
 
     </Frame>

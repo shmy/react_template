@@ -208,8 +208,7 @@ const Personnel: FC = props => {
                   }
                 }}><PlusOutlined/>添加用户</Button>
               </>
-            }
-            style={{marginTop: '20px'}}>
+            }>
         <Table tableLayout="fixed" loading={loading} size="small" bordered pagination={false} rowKey="id"
                dataSource={data?.list} columns={[
           ...columns,
