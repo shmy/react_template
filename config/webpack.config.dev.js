@@ -39,13 +39,6 @@ module.exports = merge(config, {
 					"^/static": ""
 				}
 			},
-			"/sso": {
-				target: "http://localhost:3000/sso",
-				changeOrigin: true,
-				pathRewrite: {
-					"^/sso": ""
-				}
-			}
 			// "/api": {
 			// 	target: "https://sso.shmy.tech/api",
 			// 	changeOrigin: true,
@@ -58,13 +51,6 @@ module.exports = merge(config, {
 			// 	changeOrigin: true,
 			// 	pathRewrite: {
 			// 		"^/static": ""
-			// 	}
-			// },
-			// "/sso": {
-			// 	target: "https://sso.shmy.tech/sso",
-			// 	changeOrigin: true,
-			// 	pathRewrite: {
-			// 		"^/sso": ""
 			// 	}
 			// }
 		}

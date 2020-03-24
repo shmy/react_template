@@ -26,8 +26,11 @@ const AppItem: FC<AppItemProps> = ({app, manageable}) => {
     return result;
   }, [manageable]);
   const handleEnter = id => {
-    const token = window.localStorage.getItem("token");
-    window.open(`/sso/${id}/${token}?t=${Date.now()}`);
+    let token = window.localStorage.getItem("token");
+    if (token) {
+      token = window.btoa(token);
+    }
+    window.open(`/api/sso/${id}/${token}?_=${Date.now()}`);
   };
   return (
     <Col key={app.id} xs={24} sm={12} md={8} lg={6} xxl={4}>
