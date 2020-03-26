@@ -1,0 +1,96 @@
+version: 2
+jobs:
+  tests:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.0
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: sudo npm install -g npm@latest
+      - restore_cache:
+          keys:
+            - node-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: install-npm
+          command: npm install
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: node-v2-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: tests
+          command: echo "All Tests To Pass"
+      - store_artifacts:
+          path: coverage
+  deploy-development:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: check-node
+          command: node -v
+      - run:
+          name: install-npm
+          command: npm install
+      - run:
+          name: build
+          command: sh ./build-development.sh
+  deploy-staging:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: check-node
+          command: node -v
+      - run:
+          name: install-npm
+          command: npm install
+      - run:
+          name: build
+          command: sh ./build-staging.sh
+  deploy-product:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: check-node
+          command: node -v
+      - run:
+          name: install-npm
+          command: npm install
+      - run:
+          name: build
+          command: sh ./build-staging.sh
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - tests
+      - deploy-development:
+          requires:
+            - tests
+      - hold-staging:
+          type: approval
+          requires:
+            - deploy-development
+      - hold-product:
+          type: approval
+          requires:
+            - deploy-development
+      - deploy-staging:
+          requires:
+            - hold-staging
+      - deploy-product:
+          requires:
+            - hold-product
