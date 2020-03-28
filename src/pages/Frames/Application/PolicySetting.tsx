@@ -3,7 +3,8 @@ import {useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
 import {Button, Form, Input, Modal, Table, message as AntMessage, Card} from "antd";
 import {getRequiredRule} from "@/rules";
-import {PlusOutlined} from '@ant-design/icons';
+import {PlusOutlined, ExportOutlined, ImportOutlined} from '@ant-design/icons';
+import FileSaver from "file-saver";
 
 const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
   const [visible, setVisible] = useState(false);
@@ -113,6 +114,7 @@ const columns = [
     dataIndex: 'action',
   },
 ];
+
 // TODO: 使用checkbox进行管理
 interface PolicySettingProps {
   id: number;
@@ -121,26 +123,63 @@ interface PolicySettingProps {
 const PolicySetting: FC<PolicySettingProps> = props => {
   const {data, refresh} = useRequest(() => http.get('/v1/policy/' + props.id));
   const {run} = useRequest((data) => http.put('/v1/policy/' + props.id + '/remove', data), {manual: true});
+  const {run: importRun} = useRequest((data) => http.post('/v1/policy/' + props.id + '/import', data), {manual: true});
   const ref = useRef<{
     open: () => void,
     openEdit: (row: any) => void,
   }>(null);
   const handleRemove = (values) => {
-    run(values).then((result: any) => {
+    run({
+      subject: values.$$subject,
+      object: values.$$object,
+      action: values.action,
+    }).then((result: any) => {
       if (result === true) {
         refresh();
       }
     });
   };
+  const handleOpenModal = () => {
+    if (ref.current) {
+      ref.current.open();
+    }
+  };
+  const handleExport = async () => {
+    const data = await http.get('/v1/policy/' + props.id + '/export');
+    const blob = new Blob([JSON.stringify(data)], {type: "application/json;charset=utf-8"});
+    FileSaver.saveAs(blob, `policy-${props.id}-${Date.now()}.json`);
+  };
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    if (files.length === 0) {
+      return;
+    }
+    const file = files[0];
+    e.target.value = '';
+    const fr = new FileReader();
+    fr.onload = function () {
+      if(this.result) {
+        importRun(JSON.parse(this.result as string));
+      }
+    };
+    fr.onerror = function () {
+      AntMessage.warning('导入失败');
+    };
+    fr.readAsText(file, 'utf-8');
+  };
   return (
     <div>
       <PolicyModalWithForward onComplete={refresh} appId={props.id} ref={ref}/>
       <Card extra={<>
-        <Button type="primary" onClick={() => {
-          if (ref.current) {
-            ref.current.open();
-          }
-        }}><PlusOutlined />添加角色权限</Button>
+        <Button type="primary" onClick={handleOpenModal}><PlusOutlined/>添加角色权限</Button>
+        <Button onClick={handleExport} style={{marginLeft: '10px'}} type="primary"><ExportOutlined/>导出</Button>
+        <Button style={{position: 'relative', marginLeft: '10px', overflow: 'hidden'}}
+                type="primary"><ImportOutlined/>导入
+          <input style={{opacity: '0', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 0}}
+                 onChange={handleFileChange}
+                 accept="application/json"
+                 type="file"/>
+        </Button>
       </>}>
 
         <Table size="small" bordered pagination={false} rowKey={row => row.id}
