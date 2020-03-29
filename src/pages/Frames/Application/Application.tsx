@@ -89,7 +89,6 @@ const Application: FC<RouteComponentProps> = props => {
                           style={{width: '240px'}} placeholder="搜索应用" allowClear/>}
             extra={<Button onClick={handleClick} type="primary"><PlusOutlined/>添加应用</Button>}>
 
-
         <Row style={{marginTop: '10px'}} gutter={[16, 16]}>
           {filteredItems.map(app => {
             return (
