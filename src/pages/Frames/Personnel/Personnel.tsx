@@ -70,7 +70,7 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
         getRequiredRule("用户名"),
         getUserNameRule("用户名"),
       ],
-      render: () => <Input disabled={isEditMode} placeholder="请输入用户名"/>,
+      render: () => <Input placeholder="请输入用户名"/>,
     },
     {
       label: isEditMode ? "重置密码" : "密码",
