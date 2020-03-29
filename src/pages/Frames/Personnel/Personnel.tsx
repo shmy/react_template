@@ -78,7 +78,7 @@ const PersonnelModal: FC<{ onComplete: () => void }> = (props, ref) => {
       rules: !isEditMode ? [
         getRequiredRule("密码"),
       ] : [],
-      render: () => <Input type="password" placeholder={`请输入密码${isEditMode ? '(可选)' : ''}`}/>,
+      render: () => <Input.Password placeholder={`请输入密码${isEditMode ? '(可选)' : ''}`}/>,
     },
     {
       label: "头像",

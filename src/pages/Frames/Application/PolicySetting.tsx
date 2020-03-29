@@ -6,6 +6,7 @@ import {getRequiredRule} from "@/rules";
 import {PlusOutlined, ExportOutlined, ImportOutlined} from '@ant-design/icons';
 import FileSaver from "file-saver";
 import PolicyCheckbox from "@/components/PolicyCheckbox/PolicyCheckbox";
+import {layout} from "@/pages/Frames/Application/BasicSetting";
 
 const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
   const [visible, setVisible] = useState(false);
@@ -100,7 +101,7 @@ const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
            footer={null}
     >
       <Spin spinning={isLoading}>
-        <Form form={form} initialValues={{policy: []}} onFinish={handleSubmit} layout="horizontal">
+        <Form {...layout} form={form} initialValues={{policy: []}} onFinish={handleSubmit} layout="horizontal">
           <Form.Item name="subject" rules={[getRequiredRule("角色")]} label="角色">
             <Input disabled={isEditMode} placeholder="角色"/>
           </Form.Item>

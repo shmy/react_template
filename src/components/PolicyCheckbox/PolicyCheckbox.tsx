@@ -1,7 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
 import {useRequest} from "@umijs/hooks";
 import http, {AfterResponse} from "@/utils/http";
-import {Button, Checkbox, Input} from "antd";
+import {Button, Checkbox, Input, Tooltip} from "antd";
+import {EnterOutlined} from "@ant-design/icons";
 import _ from "lodash";
 import styles from "./PolicyCheckbox.module.scss";
 
@@ -25,10 +26,14 @@ const DoubleInput: FC<{ onSubmit: (s: string[]) => void }> = props => {
   };
   return (
     <div className={styles.doubleInput}>
-      <Input onKeyDown={handleKeyDown} className={styles.input} size="small" onChange={e => setObject(e.target.value.trim())} value={object} placeholder="添加对象" />
-      <Input onKeyDown={handleKeyDown} className={styles.input} size="small" onChange={e => setAction(e.target.value.trim())} value={action} placeholder="添加动作" style={{marginLeft: '10px'}}/>
-      <Button style={{marginLeft: '10px'}} htmlType="button" onClick={handleSubmit} disabled={!object || !action} size="small"
-              type="primary">添加</Button>
+      <Input allowClear onKeyDown={handleKeyDown} className={styles.input} size="small"
+             onChange={e => setObject(e.target.value.trim())} value={object} placeholder="新对象"/>
+      <Input allowClear onKeyDown={handleKeyDown} className={styles.input} size="small"
+             onChange={e => setAction(e.target.value.trim())} value={action} placeholder="新动作"
+             style={{marginLeft: '10px'}}/>
+      <Button style={{marginLeft: '10px'}} htmlType="button" onClick={handleSubmit} disabled={!object || !action}
+              size="small"
+              type="primary"><EnterOutlined/></Button>
     </div>
   );
 };
@@ -45,9 +50,16 @@ const SingleInput: FC<{ onSubmit: (s: string) => void }> = props => {
       }
     }
   };
+  const handleSubmit = () => {
+    if (value) {
+      props.onSubmit(value);
+      setValue('');
+    }
+  };
   return (
-    <Input size="small" onKeyDown={handleKeyDown} onChange={e => setValue(e.target.value.trim())} value={value}
-           placeholder="添加动作" style={{width: '100%'}}/>
+    <Input allowClear size="small" onKeyDown={handleKeyDown} onChange={e => setValue(e.target.value.trim())}
+           value={value}
+           placeholder="新动作" suffix={<EnterOutlined onClick={handleSubmit}/>} style={{width: '100%'}}/>
   );
 };
 type checkboxValue = string[];
@@ -125,15 +137,20 @@ const PolicyCheckbox: FC<PolicyCheckboxProps> = props => {
       {fetchData.map((item, index) => {
         return (
           <div className={styles.item} key={item.object}>
-            <p>{item.object}</p>
+            <div>
+              <div className={styles.title}><Tooltip placement="topLeft" title={item.object}>{item.object}</Tooltip>
+              </div>
+              <div>
+                <SingleInput onSubmit={(value: string) => handleActionAdded(index, value)}/>
+              </div>
+            </div>
             <ul className={styles.ul}>
               {item.children.map(curr => {
                 const v = `${curr.$$object} ${curr.action}`;
                 const checked = _.findIndex(value, item => item === v) !== -1;
-                return <li key={curr.action}><Checkbox onChange={(e) => handleChange(v, e)}
+                return <li key={curr.action}><Checkbox style={{width: '100%'}} onChange={(e) => handleChange(v, e)}
                                                        checked={checked}>{curr.action}</Checkbox></li>;
               })}
-              <li><SingleInput onSubmit={(value: string) => handleActionAdded(index, value)}/></li>
             </ul>
           </div>
         );
