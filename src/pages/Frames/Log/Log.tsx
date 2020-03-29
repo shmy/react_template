@@ -29,7 +29,7 @@ const columns = [
     dataIndex: 'created_at',
     width: 200,
     render: v => {
-      return <span>{Dayjs(v).format("YYYY-MM-DD hh:mm:ss")}</span>
+      return <span>{Dayjs(v).format("YYYY-MM-DD HH:mm:ss")}</span>;
     }
   },
   {
