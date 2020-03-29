@@ -3,6 +3,7 @@ import Frame from "@/components/Frame/Frame";
 import {Card, Pagination, Table} from "antd";
 import {useRequest} from "@umijs/hooks";
 import http from "@/utils/http";
+import Dayjs from "dayjs";
 
 const columns = [
   {
@@ -24,9 +25,17 @@ const columns = [
     }
   },
   {
+    title: '时间',
+    dataIndex: 'created_at',
+    width: 200,
+    render: v => {
+      return <span>{Dayjs(v).format("YYYY-MM-DD hh:mm:ss")}</span>
+    }
+  },
+  {
     title: 'IP地址',
     dataIndex: 'ip',
-    width: 120,
+    width: 140,
   },
   {
     title: 'IP区域',

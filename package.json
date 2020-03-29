@@ -57,6 +57,7 @@
     "@umijs/hooks": "^1.8.0",
     "antd": "^4.0.3",
     "axios": "^0.19.2",
+    "dayjs": "^1.8.23",
     "file-saver": "^2.0.2",
     "promise.allsettled": "^1.0.2",
     "react": "^16.13.0",
