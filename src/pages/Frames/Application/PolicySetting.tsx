@@ -131,24 +131,16 @@ interface PolicySettingProps {
 
 const PolicySetting: FC<PolicySettingProps> = props => {
   const {data, refresh} = useRequest(() => http.get('/v1/policy/' + props.id));
-  const {run} = useRequest((data) => http.put('/v1/policy/' + props.id + '/remove', data), {manual: true});
   const {run: importRun} = useRequest((data) => http.post('/v1/policy/' + props.id + '/import', data), {manual: true});
+  const {run: removeRun} = useRequest((role) => http.delete('/v1/policy/' + props.id + '/remove', {params: {role}}), {manual: true});
   const ref = useRef<{
     open: () => void,
     openEdit: (roleName: string) => void,
   }>(null);
   const handleRemove = (roleName: string) => {
-    // TODO: 删除时 要删除关联
-    window.alert('TODO: 删除' + roleName);
-    // run({
-    //   subject: values.$$subject,
-    //   object: values.$$object,
-    //   action: values.action,
-    // }).then((result: any) => {
-    //   if (result === true) {
-    //     refresh();
-    //   }
-    // });
+    removeRun(roleName).then(() => {
+      refresh();
+    });
   };
   const handleOpenModal = () => {
     if (ref.current) {
