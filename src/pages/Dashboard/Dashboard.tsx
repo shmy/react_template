@@ -16,6 +16,7 @@ const Routes: FC = () => {
         <Route exact path="/application" component={lazy(() => import('../Frames/Application/Application'))}/>
         <Route exact path="/application/:id" component={lazy(() => import('../Frames/Application/Detail'))}/>
         <Route exact path="/personnel" component={lazy(() => import('../Frames/Personnel/Personnel'))}/>
+        <Route exact path="/log" component={lazy(() => import('../Frames/Log/Log'))}/>
         <Route exact path="/app_list" component={lazy(() => import('../Frames/AppList/AppList'))}/>
         {/*index*/}
         {menu.length > 0 ? <Redirect exact path="/" to={(menu[0] as any).path}/> : null}
