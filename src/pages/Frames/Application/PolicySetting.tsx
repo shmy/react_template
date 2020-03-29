@@ -1,45 +1,63 @@
-import React, {FC, forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import React, {FC, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {useRequest} from "@umijs/hooks";
 import http, {AfterResponse, isHttpError} from "@/utils/http";
-import {Button, Form, Input, Modal, Table, message as AntMessage, Card} from "antd";
+import {Button, Form, Input, Modal, Table, message as AntMessage, Card, Checkbox, Spin} from "antd";
 import {getRequiredRule} from "@/rules";
 import {PlusOutlined, ExportOutlined, ImportOutlined} from '@ant-design/icons';
 import FileSaver from "file-saver";
+import PolicyCheckbox from "@/components/PolicyCheckbox/PolicyCheckbox";
 
 const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
   const [visible, setVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const {loading, run} = useRequest<AfterResponse<any>>((appId, data) => http.post('/v1/policy/' + appId, data), {
+  const {loading, run} = useRequest<AfterResponse<any>>((appId, data) => http.post('/v1/policy/' + appId + '/import', data), {
     manual: true,
   });
-  const {loading: updateLoading, run: updateRun} = useRequest<AfterResponse<any>>((appId, data) => http.put('/v1/policy/' + appId + '/update', data), {
+  const {loading: fetchLoading, run: fetchRun} = useRequest<AfterResponse<any>>((appId, role) => http.get('/v1/policy/' + appId + '/oc_by_role', {params: {role}}), {
     manual: true,
   });
+  const {loading: updateLoading, run: updateRun} = useRequest<AfterResponse<any>>((appId, data) => http.put('/v1/policy/' + appId + '/update_by_role', data), {
+    manual: true,
+  });
+  const beforeData = useRef<string[]>([]);
   const [form] = Form.useForm();
-  const beforeData = useRef<any>(null);
-  const isLoading = loading || updateLoading;
+  const isLoading = loading || updateLoading || fetchLoading;
   const handleSubmit = (values) => {
     if (isEditMode) {
-      updateRun(props.appId, {before: beforeData.current, after: values}).then(result => {
+      const deleted: {object: string; action: string;}[] = [];
+      const created: {object: string; action: string;}[] = [];
+      beforeData.current.forEach(item => {
+        if (_.findIndex(values.policy, curr => curr === item) === -1) {
+          const [object, action] = item.split(' ');
+          deleted.push({object, action});
+        }
+      });
+      values.policy.forEach(item => {
+        if (_.findIndex(beforeData.current, curr => curr === item) === -1) {
+          const [object, action] = item.split(' ');
+          created.push({object, action});
+        }
+      });
+      updateRun(props.appId, {subject: values.subject, deleted, created}).then(result => {
         if (isHttpError(result)) {
           result.showAlert();
-          return;
-        }
-        if (result === false) {
-          AntMessage.warning('不能与其他数据重复， 请检查');
           return;
         }
         props.onComplete();
         setVisible(false);
       });
     } else {
-      run(props.appId, values).then(result => {
+      const result = values.policy.map((key: string) => {
+        const [object, action] = key.split(' ');
+        return {
+          subject: values.subject,
+          object,
+          action,
+        };
+      });
+      run(props.appId, result).then(result => {
         if (isHttpError(result)) {
           result.showAlert();
-          return;
-        }
-        if (result === false) {
-          AntMessage.warning('不能与其他数据重复， 请检查');
           return;
         }
         props.onComplete();
@@ -51,20 +69,23 @@ const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
   useImperativeHandle(ref, () => {
     return {
       open() {
-        beforeData.current = null;
+        beforeData.current = [];
+        form.resetFields();
         setIsEditMode(false);
         setVisible(true);
-        form.resetFields();
       },
-      openEdit(row: any) {
-        beforeData.current = row;
+      openEdit(roleName: string) {
+        beforeData.current = [];
+        form.resetFields();
+        fetchRun(props.appId, roleName).then((data) => {
+          if (isHttpError(data)) {
+            return;
+          }
+          beforeData.current = data;
+          form.setFieldsValue({subject: roleName, policy: data});
+        });
         setIsEditMode(true);
         setVisible(true);
-        form.setFieldsValue({
-          subject: row.subject,
-          object: row.object,
-          action: row.action,
-        });
       }
     };
   });
@@ -78,21 +99,20 @@ const PolicyModal = (props: { appId: number, onComplete: () => void }, ref) => {
            onCancel={() => setVisible(false)}
            footer={null}
     >
-      <Form form={form} onFinish={handleSubmit} layout="horizontal">
-        <Form.Item name="subject" rules={[getRequiredRule("角色")]} label="角色">
-          <Input placeholder="角色"/>
-        </Form.Item>
-        <Form.Item name="object" rules={[getRequiredRule("对象")]} label="对象">
-          <Input placeholder="对象"/>
-        </Form.Item>
-        <Form.Item name="action" rules={[getRequiredRule("动作")]} label="动作">
-          <Input placeholder="动作"/>
-        </Form.Item>
-        <Form.Item style={{textAlign: 'right'}}>
-          <Button loading={isLoading} htmlType="submit" type="primary">提交</Button>
-          <Button disabled={isLoading} style={{marginLeft: '20px'}} onClick={() => setVisible(false)}>取消</Button>
-        </Form.Item>
-      </Form>
+      <Spin spinning={isLoading}>
+        <Form form={form} initialValues={{policy: []}} onFinish={handleSubmit} layout="horizontal">
+          <Form.Item name="subject" rules={[getRequiredRule("角色")]} label="角色">
+            <Input disabled={isEditMode} placeholder="角色"/>
+          </Form.Item>
+          <Form.Item name="policy" rules={[getRequiredRule("权限", false)]} label="选择权限">
+            <PolicyCheckbox appId={props.appId}/>
+          </Form.Item>
+          <Form.Item style={{textAlign: 'right'}}>
+            <Button loading={isLoading} htmlType="submit" type="primary">提交</Button>
+            <Button disabled={isLoading} style={{marginLeft: '20px'}} onClick={() => setVisible(false)}>取消</Button>
+          </Form.Item>
+        </Form>
+      </Spin>
     </Modal>
   );
 };
@@ -102,20 +122,9 @@ const columns = [
   {
     title: '角色',
     dataIndex: 'subject',
-    width: 200,
-  },
-  {
-    title: '对象',
-    dataIndex: 'object',
-    width: 200,
-  },
-  {
-    title: '动作',
-    dataIndex: 'action',
   },
 ];
 
-// TODO: 使用checkbox进行管理
 interface PolicySettingProps {
   id: number;
 }
@@ -126,18 +135,20 @@ const PolicySetting: FC<PolicySettingProps> = props => {
   const {run: importRun} = useRequest((data) => http.post('/v1/policy/' + props.id + '/import', data), {manual: true});
   const ref = useRef<{
     open: () => void,
-    openEdit: (row: any) => void,
+    openEdit: (roleName: string) => void,
   }>(null);
-  const handleRemove = (values) => {
-    run({
-      subject: values.$$subject,
-      object: values.$$object,
-      action: values.action,
-    }).then((result: any) => {
-      if (result === true) {
-        refresh();
-      }
-    });
+  const handleRemove = (roleName: string) => {
+    // TODO: 删除时 要删除关联
+    window.alert('TODO: 删除' + roleName);
+    // run({
+    //   subject: values.$$subject,
+    //   object: values.$$object,
+    //   action: values.action,
+    // }).then((result: any) => {
+    //   if (result === true) {
+    //     refresh();
+    //   }
+    // });
   };
   const handleOpenModal = () => {
     if (ref.current) {
@@ -158,8 +169,10 @@ const PolicySetting: FC<PolicySettingProps> = props => {
     e.target.value = '';
     const fr = new FileReader();
     fr.onload = function () {
-      if(this.result) {
-        importRun(JSON.parse(this.result as string));
+      if (this.result) {
+        importRun(JSON.parse(this.result as string)).then(() => {
+          refresh();
+        });
       }
     };
     fr.onerror = function () {
@@ -171,7 +184,7 @@ const PolicySetting: FC<PolicySettingProps> = props => {
     <div>
       <PolicyModalWithForward onComplete={refresh} appId={props.id} ref={ref}/>
       <Card extra={<>
-        <Button type="primary" onClick={handleOpenModal}><PlusOutlined/>添加角色权限</Button>
+        <Button type="primary" onClick={handleOpenModal}><PlusOutlined/>添加角色&权限</Button>
         <Button onClick={handleExport} style={{marginLeft: '10px'}} type="primary"><ExportOutlined/>导出</Button>
         <Button style={{position: 'relative', marginLeft: '10px', overflow: 'hidden'}}
                 type="primary"><ImportOutlined/>导入
@@ -182,31 +195,21 @@ const PolicySetting: FC<PolicySettingProps> = props => {
         </Button>
       </>}>
 
-        <Table size="small" bordered pagination={false} rowKey={row => row.id}
+        <Table size="small" bordered pagination={false} rowKey={row => row.subject}
                dataSource={data as any}
                columns={[
                  ...columns,
                  {
                    title: '操作',
                    width: 140,
+                   align: 'center',
                    render: (row) => {
-                     if (row.action) {
-                       return (
-                         <>
-                           <Button onClick={() => {
-                             if (ref.current) {
-                               ref.current.openEdit({
-                                 subject: row.$$subject,
-                                 object: row.$$object,
-                                 action: row.action,
-                               });
-                             }
-                           }} type="link">编辑</Button>
-                           <Button onClick={() => handleRemove(row)} type="link">删除</Button>
-                         </>
-                       );
-                     }
-                     return null;
+                     return (
+                       <>
+                         <Button onClick={() => ref.current && ref.current.openEdit(row.subject)} type="link">编辑</Button>
+                         <Button onClick={() => handleRemove(row.subject)} type="link">删除</Button>
+                       </>
+                     );
                    }
                  }
                ]}/>
