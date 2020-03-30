@@ -9,12 +9,17 @@ const columns = [
   {
     title: '登录人',
     dataIndex: 'personnel_id',
-    width: 120,
+    width: 160,
+    render: (_, row) => {
+      return (
+        <span>{row.personnel_real_name || '-'} ({row.personnel_username})</span>
+      );
+    }
   },
   {
     title: '应用',
-    dataIndex: 'application_id',
-    width: 120,
+    dataIndex: 'app_name',
+    width: 140,
   },
   {
     title: '结果',
