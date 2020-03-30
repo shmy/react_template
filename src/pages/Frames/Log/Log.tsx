@@ -49,7 +49,7 @@ const columns = [
   },
   {
     title: '终端',
-    dataIndex: 'userAgent'
+    dataIndex: 'user_agent'
   }
 ];
 
