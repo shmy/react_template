@@ -26,14 +26,14 @@ module.exports = merge(config, {
 		port,
 		proxy: {
 			"/api": {
-				target: "http://localhost:3000/api",
+				target: "http://localhost:3010/api",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/api": ""
 				}
 			},
 			"/static": {
-				target: "http://localhost:3000/static",
+				target: "http://localhost:3010/static",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/static": ""

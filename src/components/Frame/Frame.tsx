@@ -6,10 +6,11 @@ interface FrameProps {
 }
 
 const Frame: FC<FrameProps> = props => {
+  const handleScroll = (evt) => {
+    props.onScroll && props.onScroll(evt);
+  };
   return (
-    <div onScroll={(evt) => {
-      props.onScroll && props.onScroll(evt);
-    }} className={styles.frame}>
+    <div onScroll={handleScroll} className={styles.frame}>
       <div className={styles.frameInner}>
         {props.children}
       </div>

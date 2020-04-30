@@ -27,13 +27,13 @@ export const fields = [
     render: () => <SingleImageUpload/>,
   },
   {
-    label: "应用地址",
+    label: "应用登录回调地址",
     name: "url",
     rules: [
-      getRequiredRule("应用地址"),
-      getUrlRule("应用地址"),
+      getRequiredRule("应用登录回调地址"),
+      getUrlRule("应用登录回调地址"),
     ],
-    render: () => <Input placeholder="应用地址"/>,
+    render: () => <Input placeholder="应用登录回调地址"/>,
   },
   {
     label: "应用简介",
@@ -49,8 +49,8 @@ export const fields = [
 ];
 export const initialValues = {enable: true};
 export const layout = {
-  labelCol: {span: 5},
-  wrapperCol: {span: 19},
+  labelCol: {span: 8},
+  wrapperCol: {span: 16},
 };
 const BasicSetting: FC<BasicSettingProps> = props => {
   const {loading, data} = useRequest(() => http.get('/v1/app/' + props.id));
